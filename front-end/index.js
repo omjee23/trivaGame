@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const apiUrl = "http://localhost:3000";
+  const apiUrl = "https://trivagame.onrender.com";
 
   const playersId = {
     playerOne: "",
