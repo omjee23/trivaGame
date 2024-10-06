@@ -7,17 +7,18 @@ const routes = require('./routes/api.router');
 const port = 3000;
 
 app.use(cors());
+app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 app.use('/', routes)
 
 app.get('/', (req, res) => {
-    res.send("Welcome to trivaGame")
+    res.send(JSON.stringify("Welcome to trivdata : Mr Om"));
 })
 
 
 
 
-mongoose.connect('mongodb+srv://om22:om22@cluster0.gk3bc.mongodb.net/triviaGame?retryWrites=true&w=majority&appName=Cluster0',)
+mongoose.connect('mongodb://localhost:27017/triviaGame',)
 .then(()=> console.log("Connected to triviaGame database"))
 .catch(err => console.log("Connection Error in database",err))
 

@@ -8,10 +8,9 @@ const players = async (req, res) => {
   try {
     const playerOneName = new users.player({ name: playerOne });
     const playerTwoName = new users.player({ name: playerTwo });
-
     await playerOneName.save();
     await playerTwoName.save();
-    res.send({ status: 200, message: "Successfully registered!" });
+    res.send({ status: 200, message: "Successfully registered!" , playerOneName , playerTwoName });
   } catch (error) {
     res.send({ status: 404, message: error.message });
   }
@@ -35,7 +34,7 @@ const startGame = async (req, res) => {
     });
     await gameSession.save();
 
-    res.send({ status: 200, message: "Game statred successfully" });
+    res.send({ status: 200, message: "Game statred successfully" ,_id: gameSession._id });
   } catch (error) {
     res.send({ status: 400, error: error.message });
   }
@@ -46,7 +45,13 @@ const questionCategory = async (req, res) => {
     const response = await axios.get(
       "https://the-trivia-api.com/api/categories"
     );
-    res.json(response.data);
+    let category = response.data
+    let categoryList = [];
+    for (let key in category) {
+      categoryList.push(...category[key]);
+    }
+    res.json(categoryList);
+    // console.log(categoryList , "categorylist data");
   } catch (error) {
     res.send({ status: 500, error: "Failed to fetch categories" });
   }
@@ -54,10 +59,10 @@ const questionCategory = async (req, res) => {
 
 const getQuestions = async (req, res) => {
   try {
-    const { categories, gameId } = req.body;
+    const { categories, gameId } = req.query;
     console.log(categories, gameId);
     const questions = await axios.get(
-      `https://the-trivia-api.com/api/questions?categories=${categories}`
+      `https://the-trivia-api.com/api/questions?categories=${encodeURIComponent(categories)}`
     );
     const allQuestions = questions.data;
 
@@ -112,11 +117,11 @@ const getQuestions = async (req, res) => {
     }
     game.questions = updateQuestions;
     await game.save();
-    res.json(updateQuestions);
+    return res.json(updateQuestions);
   } catch (error) {
     console.log(error, "Error");
 
-    res.send({ status: 500, error: "Failed to fetch questions" });
+    return res.send({ status: 500, error: "Failed to fetch questions" });
   }
 };
 
@@ -208,7 +213,7 @@ const endGame = async (req, res) => {
     await game.save();
 
     const playerOne = {
-        id: game.playerOne, // Directly using IDs
+        id: game.playerOne,
         score: game.score.playerOne
       };
       const playerTwo = {
@@ -223,7 +228,7 @@ const endGame = async (req, res) => {
         winner = {  name: 'playerTwo', score: playerTwo.score };
         loser = {  name: 'playerOne', score: playerOne.score };
       } else {
-        winner = null; // It's a tie
+        winner = null;
       }
       console.log("Winner:", winner);
       res.status(200).json({
@@ -238,7 +243,7 @@ const endGame = async (req, res) => {
           name: playerTwo.name,
           score: playerTwo.score
         },
-        winner: winner ? winner : "Tie"
+        winner: winner ? winner : {name: "Tie" }
       });
     
   } catch (error) {
