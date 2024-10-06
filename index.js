@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 
 
 
-mongoose.connect('mongodb+srv://om22:omjipal22@cluster0.gk3bc.mongodb.net/triviaGame?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect('mongodb+srv://om22:omjipal22@cluster0.gk3bc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 .then(()=> console.log("Connected to triviaGame database"))
 .catch(err => console.log("Connection Error in database", err));
 
